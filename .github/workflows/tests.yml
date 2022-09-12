@@ -46,4 +46,4 @@ jobs:
         run: php tests/wait-for-and-setup-database.php
 
       - name: Execute tests
-        run: vendor/bin/phpunit
+        run: vendor/bin/phpunit --verbose --coverage-text
