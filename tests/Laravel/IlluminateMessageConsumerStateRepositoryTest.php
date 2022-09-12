@@ -23,8 +23,8 @@ class IlluminateMessageConsumerStateRepositoryTest extends TestCase
                 'host' => '127.0.0.1',
                 'port' => '3306',
                 'database' => 'message_bus_test',
-                'username' => 'root',
-                'password' => 'secret',
+                'username' => 'username',
+                'password' => 'password',
                 'charset' => 'utf8',
                 'collation' => 'utf8_unicode_ci',
             ]
