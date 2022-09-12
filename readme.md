@@ -3,6 +3,11 @@
 This package will provide a message bus that persists its messages. This can be used for cross context communication with public events.
 The message bus will be for a topic. A topic is a set of event types.This allows for the consuming context to only know about the topic and its event types, and not where they originate from.
 
+## Installation
+
+```bash
+composer require robertbaelde/persisting-message-bus
+```
 ## Usage
 
 ### Configuring a topic
