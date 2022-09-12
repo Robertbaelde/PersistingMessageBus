@@ -35,6 +35,7 @@ while(true) {
         break;
     } catch (Throwable $exception) {
         fwrite(STDOUT, "Waiting for a DB connection...\n");
+        fwrite(STDOUT, $exception->getMessage(). "\n");
         $backOff->backOff($tries, $exception);
         goto start;
     }
