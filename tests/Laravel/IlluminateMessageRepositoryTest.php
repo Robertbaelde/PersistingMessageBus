@@ -5,10 +5,10 @@ namespace Tests\Laravel;
 use Illuminate\Database\Capsule\Manager;
 use Robertbaelde\PersistingMessageBus\DefaultTableSchema;
 use Robertbaelde\PersistingMessageBus\Laravel\IlluminateMessageRepository;
-use Robertbaelde\PersistingMessageBus\MessageRepository;
-use Tests\MessageRepositoryTestCase;
+use Robertbaelde\PersistingMessageBus\MessageRepository\MessageRepository;
+use Tests\IncrementalIdMessageRepositoryTestCase;
 
-class IlluminateMessageRepositoryTest extends MessageRepositoryTestCase
+class IlluminateMessageRepositoryTest extends IncrementalIdMessageRepositoryTestCase
 {
     private $tableName = 'public_messages';
     private \Illuminate\Database\Connection $connection;

@@ -2,10 +2,11 @@
 
 namespace Tests\Fixtures;
 
-use Robertbaelde\PersistingMessageBus\MessageRepository;
+use Robertbaelde\PersistingMessageBus\MessageRepository\MessageRepository;
+use Tests\IncrementalIdMessageRepositoryTestCase;
 use Tests\MessageRepositoryTestCase;
 
-class InMemoryMessageRepositoryTest extends MessageRepositoryTestCase
+class InMemoryMessageRepositoryTest extends IncrementalIdMessageRepositoryTestCase
 {
     private InMemoryMessageRepository $messageRepository;
 

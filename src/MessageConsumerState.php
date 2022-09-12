@@ -2,9 +2,11 @@
 
 namespace Robertbaelde\PersistingMessageBus;
 
+use Robertbaelde\PersistingMessageBus\MessageRepository\Cursor;
+
 interface MessageConsumerState
 {
-    public function getLastProcessedTimestamp(): \DateTimeImmutable;
+    public function getCursor(): ?Cursor;
 
-    public function storeLastProcessedTimestamp(\DateTimeImmutable $lastProcessed): void;
+    public function storeNewCursor(Cursor $cursor): void;
 }

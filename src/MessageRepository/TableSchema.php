@@ -4,6 +4,8 @@ namespace Robertbaelde\PersistingMessageBus\MessageRepository;
 
 interface TableSchema
 {
+    public function getSortingColumn(): string;
+
     public function messageIdColumn(): string;
 
     public function topicColumn(): string;

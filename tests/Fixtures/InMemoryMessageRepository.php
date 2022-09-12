@@ -2,9 +2,12 @@
 
 namespace Tests\Fixtures;
 
+use Robertbaelde\PersistingMessageBus\MessageRepository\Cursor;
+use Robertbaelde\PersistingMessageBus\MessageRepository\IncrementalCursor;
+use Robertbaelde\PersistingMessageBus\MessageRepository\PaginatedMessages;
 use Robertbaelde\PersistingMessageBus\RawMessage;
 
-class InMemoryMessageRepository implements \Robertbaelde\PersistingMessageBus\MessageRepository
+class InMemoryMessageRepository implements \Robertbaelde\PersistingMessageBus\MessageRepository\MessageRepository
 {
 
     private array $messages = [];
@@ -21,15 +24,14 @@ class InMemoryMessageRepository implements \Robertbaelde\PersistingMessageBus\Me
 
     public function getMessagesForTopic(
         string $topicName,
-        ?\DateTimeInterface $since = null,
-        int $messagesPerPage = 50
-    ): array {
-        $messages = array_filter($this->messages, fn(RawMessage $rawMessage) => $rawMessage->topic === $topicName);
-        $messages = array_filter($messages, fn(RawMessage $rawMessage) => $rawMessage->publishedAt >= $since);
-        usort($messages, function(RawMessage $thisRawMessage, RawMessage $thatRawMessage){
-            return $thisRawMessage->publishedAt > $thatRawMessage->publishedAt ? 1 : 0;
-        });
+        Cursor $cursor
+    ): PaginatedMessages {
+        if(!$cursor instanceof IncrementalCursor){
+            throw new \LogicException('Only IncrementalCursor is supported');
+        }
 
-        return $messages;
+        $messages = array_filter($this->messages, fn(RawMessage $rawMessage) => $rawMessage->topic === $topicName);
+        $messages = array_slice($messages, $cursor->offset(), $cursor->limit());
+        return new PaginatedMessages($messages, $cursor->nextPage(count($messages)));
     }
 }

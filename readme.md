@@ -1,55 +1,119 @@
+# Persisting message bus
 
+This package will provide a message bus that persists its messages. This can be used for cross context communication with public events.
+The message bus will be for a topic. A topic is a set of event types.This allows for the consuming context to only know about the topic and its event types, and not where they originate from.
 
-## Aggregate root
+## Usage
 
-* Agg root repository
-* -> message dispatchers
-* -> outbox (goes to consumer, consumer can forward to domainMessageDispatcher) or otherwise use dispatcher directly in repo
-* -> Sooo package needs to provide a message dispatcher
+### Configuring a topic
 
-Message Dispatcher requirements
+A topic is a set of message classes, mapped to a string name. Each topic must have a unique name.
 
-Guard that message is configured in topic.
-Stores message in message repository (using special class name inflector with topic configuration)
+```php
+<?php
 
-query by topic, sorted by time and offset by timestamp
+use Robertbaelde\PersistingMessageBus\BaseTopic;
 
-Dispatcher -> persists domain event
+class TestTopic extends BaseTopic
+{
+    public const SimpleDomainMessage = SimpleDomainMessage::class;
 
-repository information: 
-* messageId
-* topic
-* eventName
-* payload
-* recorded_at
+    public function getMessages(): array
+    {
+        return [
+            'SimpleDomainMessage' => self::SimpleDomainMessage
+        ];
+    }
 
+    public function getName(): string
+    {
+        return 'TestTopic';
+    }
+}
+```
 
-```php 
+Messages must implement the PublicMessage interface
 
-// publishing a message on the bus 
+```php
+use Robertbaelde\PersistingMessageBus\PublicMessage;
 
+class SimpleDomainMessage implements PublicMessage
+{
+}
+```
+
+### Dispatching messages
+In order to dispatch messages you'll need a message bus.
+This can be constructed using a topic and a message repository.
+
+With this topic you are able to construct a MessageDispatcher, which can be used to dispatch messages.
+Message dispatchers can decorate messages using a MessageDecorator. 
+
+```php
 $message = new SimpleDomainMessage('bar');
 
 $messageBus = new MessageBus(
-        new TestTopic(),
-        $this->messageRepository
+    new TestTopic(),
+    $this->messageRepository
 );
-    
+
 $messageDispatcher = new MessageDispatcher(
     $messageBus,
     new DefaultMessageDecorator(new SystemClock()),
 );
 
-$messageDispatcher->publish($message);
+$messageDispatcher->dispatch($message);
+```
 
-// Some other context 
+### Consuming messages
+In order to consume messages you'll need a message bus and a repository that keeps track of your offset to the message stream. 
+Eventsauce's message consumers can be used as consumers.
+
+```php
 $messageConsumer = new MessageConsumer(
-    $messageBus,
-    $messageConsumerStateRepository
-    $consumers,
+    messageBus: $this->messageBus,
+    messageConsumerState: new InMemoryMessageConsumerState(),
+    messageConsumer: $consumer
 );
 
-while(true){
-    $messageConsumer->handleNewMessages();
-}
+$messageConsumer->handleNewMessages();
 ```
+
+When using a message consumer you might want to run handleNewMessages in a loop. Make sure only one process is handling new messages at a time. Otherwise messages might be handled double.
+
+### Illuminate repositories
+
+In order to persist messages and consumer state 2 repositories are provided.
+
+Database scheme for messages: 
+```sql
+CREATE TABLE IF NOT EXISTS `public_messages` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `message_id` varchar (255) NOT NULL,
+  `topic` varchar (255) NOT NULL,
+  `message_type` varchar (255) NOT NULL,
+  `payload` varchar (1200) NOT NULL,
+  `headers` varchar (1200) NOT NULL,
+  `published_at` timestamp NOT NULL,
+  PRIMARY KEY (`id` ASC),
+  KEY `topic` (`topic`, `id` ASC)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+```
+
+Database scheme for consumers:
+```sql
+CREATE TABLE IF NOT EXISTS `message_consumer_state` (
+    `consumer_name` varchar (255) NOT NULL,
+    `cursor` varchar (1200) NOT NULL,
+    `last_updated_at` timestamp NOT NULL,
+    PRIMARY KEY (`consumer_name`),
+    KEY `consumer_name` (`consumer_name`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+```
+
+## Roadmap
+
+* [ ] Add a consumer that makes http requests for cross service sync
+* [ ] Add system for Correlation & Causation id's?
+* [ ] Message inbox pattern
+* [ ] Message outbox pattern

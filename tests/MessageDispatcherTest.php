@@ -31,10 +31,9 @@ class MessageDispatcherTest extends TestCase
 
         $messageBus = new MessageBus(
             new TestTopic(),
-            new DefaultMessageDecorator(new SystemClock()),
             $this->messageRepository
         );
-        $messageBus->publish($message);
+        $messageBus->publish($message, new DefaultMessageDecorator(new SystemClock()),);
 
         $messages = $this->messageRepository->getMessages();
         $this->assertCount(1, $messages);
@@ -47,13 +46,12 @@ class MessageDispatcherTest extends TestCase
 
         $messageBus = new MessageBus(
             new TestTopic(),
-            new NullMessageDecorator(),
             $this->messageRepository
         );
 
         $this->expectException(MessageCouldNotBePublished::class);
 
-        $messageBus->publish($message);
+        $messageBus->publish($message, new NullMessageDecorator());
 
         $messages = $this->messageRepository->getMessages();
         $this->assertCount(0, $messages);
@@ -66,11 +64,10 @@ class MessageDispatcherTest extends TestCase
 
         $messageBus = new MessageBus(
             new TestTopic(),
-            new NullMessageDecorator(),
             $this->messageRepository
         );
         $this->expectException(MessageCouldNotBePublished::class);
-        $messageBus->publish($message);
+        $messageBus->publish($message, new NullMessageDecorator(),);
 
         $messages = $this->messageRepository->getMessages();
         $this->assertCount(1, $messages);
@@ -83,10 +80,9 @@ class MessageDispatcherTest extends TestCase
 
         $messageBus = new MessageBus(
             new TestTopic(),
-            new DefaultMessageDecorator(new SystemClock()),
             $this->messageRepository
         );
-        $messageBus->publish($message);
+        $messageBus->publish($message, new DefaultMessageDecorator(new SystemClock()),);
 
         $messages = $this->messageRepository->getMessages();
         $this->assertCount(1, $messages);

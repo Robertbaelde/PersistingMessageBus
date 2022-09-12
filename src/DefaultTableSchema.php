@@ -6,6 +6,10 @@ use Robertbaelde\PersistingMessageBus\MessageRepository\TableSchema;
 
 class DefaultTableSchema implements TableSchema
 {
+    public function getSortingColumn(): string
+    {
+        return 'id';
+    }
 
     public function messageIdColumn(): string
     {

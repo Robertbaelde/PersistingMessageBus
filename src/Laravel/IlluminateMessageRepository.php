@@ -4,7 +4,11 @@ namespace Robertbaelde\PersistingMessageBus\Laravel;
 
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Builder;
-use Robertbaelde\PersistingMessageBus\MessageRepository;
+use Robertbaelde\PersistingMessageBus\MessageRepository\Cursor;
+use Robertbaelde\PersistingMessageBus\MessageRepository\IncrementalCursor;
+use Robertbaelde\PersistingMessageBus\MessageRepository\IdCusor;
+use Robertbaelde\PersistingMessageBus\MessageRepository\MessageRepository;
+use Robertbaelde\PersistingMessageBus\MessageRepository\PaginatedMessages;
 use Robertbaelde\PersistingMessageBus\MessageRepository\TableSchema;
 use Robertbaelde\PersistingMessageBus\RawMessage;
 
@@ -32,16 +36,18 @@ class IlluminateMessageRepository implements MessageRepository
 
     public function getMessagesForTopic(
         string $topicName,
-        ?\DateTimeInterface $since = null,
-        int $messagesPerPage = 50
-    ): array {
-        return $this->connection->table($this->tableName)
+        Cursor $cursor
+    ): PaginatedMessages {
+
+        if(!$cursor instanceof IncrementalCursor){
+            throw new \InvalidArgumentException('Only IncrementalCursor is supported');
+        }
+
+        $messages = $this->connection->table($this->tableName)
             ->where($this->tableSchema->topicColumn(), $topicName)
-            ->when($since !== null,
-                fn(Builder $builder) => $builder->where($this->tableSchema->publishedAtColumn(), '>=', $since->format($this->tableSchema->publishedAtDateFormat()))
-            )
-            ->orderBy($this->tableSchema->publishedAtColumn(), 'asc')
-            ->take($messagesPerPage)
+            ->orderBy($this->tableSchema->getSortingColumn(), 'asc')
+            ->where($this->tableSchema->getSortingColumn(), '>', $cursor->offset())
+            ->where($this->tableSchema->getSortingColumn(), '<=', $cursor->offset() + $cursor->limit())
             ->get()
             ->map(function (object $row){
                 return new RawMessage(
@@ -53,5 +59,7 @@ class IlluminateMessageRepository implements MessageRepository
                     \DateTimeImmutable::createFromFormat($this->tableSchema->publishedAtDateFormat(), $row->{$this->tableSchema->publishedAtColumn()}),
                 );
             })->toArray();
+
+        return new PaginatedMessages($messages, $cursor->nextPage(count($messages)));
     }
 }

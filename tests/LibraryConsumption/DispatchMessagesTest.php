@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Robertbaelde\PersistingMessageBus\DefaultMessageDecorator;
 use Robertbaelde\PersistingMessageBus\MessageBus;
 use Robertbaelde\PersistingMessageBus\MessageDispatcher;
+use Robertbaelde\PersistingMessageBus\MessageRepository\IncrementalCursor;
 use Tests\Fixtures\InMemoryMessageRepository;
 use Tests\Stubs\SimpleDomainMessage;
 use Tests\Stubs\TestTopic;
@@ -38,7 +39,7 @@ class DispatchMessagesTest extends TestCase
 
         $messageDispatcher->dispatch($message);
 
-        $messages = $this->messageRepository->getMessagesForTopic((new TestTopic())->getName());
-        $this->assertCount(1, $messages);
+        $messages = $this->messageRepository->getMessagesForTopic((new TestTopic())->getName(), new IncrementalCursor());
+        $this->assertCount(1, $messages->messages);
     }
 }
