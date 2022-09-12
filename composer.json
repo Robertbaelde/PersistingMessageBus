@@ -1,0 +1,27 @@
+{
+    "name": "robertbaelde/persisting-message-bus",
+    "require": {
+        "eventsauce/eventsauce": "^3",
+        "ramsey/uuid": "^4",
+        "illuminate/database": "^8|^9"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Robertbaelde\\PersistingMessageBus\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Robertbaelde",
+            "email": "robert_baelde@hotmail.com"
+        }
+    ]
+}
