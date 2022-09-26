@@ -10,7 +10,7 @@ class MessageConsumer
         protected \EventSauce\EventSourcing\MessageConsumer $messageConsumer,
     ){}
 
-    public function handleNewMessages()
+    public function handleNewMessages(): int
     {
         $cursor = $this->messageConsumerState->getCursor();
 
@@ -21,6 +21,8 @@ class MessageConsumer
         }
 
         $this->messageConsumerState->storeNewCursor($paginatedMessages->cursor);
+
+        return count($paginatedMessages->messages);
     }
 
 
