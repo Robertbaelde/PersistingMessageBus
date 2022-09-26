@@ -38,4 +38,9 @@ final class IncrementalCursor implements Cursor
     {
         return new self($payload['offset'], $payload['limit']);
     }
+
+    public function isAtStart(): bool
+    {
+        return $this->offset === 0;
+    }
 }

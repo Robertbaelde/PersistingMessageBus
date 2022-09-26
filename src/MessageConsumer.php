@@ -2,6 +2,8 @@
 
 namespace Robertbaelde\PersistingMessageBus;
 
+use EventSauce\EventSourcing\ReplayingMessages\TriggerBeforeReplay;
+
 class MessageConsumer
 {
     public function __construct(
@@ -15,6 +17,11 @@ class MessageConsumer
         $cursor = $this->messageConsumerState->getCursor();
 
         $paginatedMessages = $this->messageBus->getMessages($cursor);
+
+        if($cursor->isAtStart() && $this->messageConsumer instanceof TriggerBeforeReplay)
+        {
+            $this->messageConsumer->beforeReplay();
+        }
 
         foreach ($paginatedMessages->messages as $message) {
             $this->messageConsumer->handle($message);

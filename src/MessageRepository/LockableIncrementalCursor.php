@@ -40,4 +40,9 @@ final class LockableIncrementalCursor extends LockableCursor
     {
         return new self($payload['offset'], $payload['limit'], $payload['locked']);
     }
+
+    public function isAtStart(): bool
+    {
+        return $this->offset === 0;
+    }
 }
