@@ -5,7 +5,6 @@ namespace Robertbaelde\PersistingMessageBus;
 use EventSauce\EventSourcing\Message;
 use EventSauce\EventSourcing\MessageDecorator;
 use Robertbaelde\PersistingMessageBus\MessageRepository\Cursor;
-use Robertbaelde\PersistingMessageBus\MessageRepository\IncrementalCursor;
 use Robertbaelde\PersistingMessageBus\MessageRepository\MessageRepository;
 use Robertbaelde\PersistingMessageBus\MessageRepository\PaginatedMessages;
 
@@ -13,13 +12,9 @@ class MessageBus
 {
     public function __construct(
         protected Topic $topic,
-        protected MessageRepository $messageRepository,
-        protected ?Cursor $startCursor = null,
+        protected MessageRepository $messageRepository
     )
     {
-        if($this->startCursor === null) {
-            $this->startCursor = new IncrementalCursor();
-        }
     }
 
     /**
@@ -63,11 +58,8 @@ class MessageBus
         }
     }
 
-    public function getMessages(?Cursor $cursor): PaginatedMessages
+    public function getMessages(Cursor $cursor): PaginatedMessages
     {
-        if($cursor === null){
-            $cursor = $this->startCursor;
-        }
         $paginatedMessages = $this->messageRepository->getMessagesForTopic($this->topic->getName(), $cursor);
         $messages = array_map(fn(RawMessage $rawMessage) => $this->topic->getSerializer()->unserializePayload($rawMessage), $paginatedMessages->messages);
         return new PaginatedMessages($messages, $paginatedMessages->cursor);

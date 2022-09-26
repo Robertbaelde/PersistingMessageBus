@@ -5,8 +5,8 @@ namespace Tests\Laravel;
 use Illuminate\Database\Capsule\Manager;
 use PHPUnit\Framework\TestCase;
 use Robertbaelde\PersistingMessageBus\Laravel\IlluminateMessageConsumerStateRepository;
-use Robertbaelde\PersistingMessageBus\Laravel\MessageConsumerStateRepository;
 use Robertbaelde\PersistingMessageBus\MessageRepository\IncrementalCursor;
+use Robertbaelde\PersistingMessageBus\MessageRepository\LockableIncrementalCursor;
 
 class IlluminateMessageConsumerStateRepositoryTest extends TestCase
 {
@@ -39,12 +39,6 @@ class IlluminateMessageConsumerStateRepositoryTest extends TestCase
             $this->tableName,
             'test_consumer'
         );
-    }
-
-    /** @test */
-    public function it_returns_null_when_no_cursor_in_database()
-    {
-        $this->assertNull($this->repository->getCursor());
     }
 
     /** @test */
