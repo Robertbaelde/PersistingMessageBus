@@ -4,10 +4,10 @@ namespace Robertbaelde\PersistingMessageBus\Laravel;
 
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Facades\DB;
 use Robertbaelde\PersistingMessageBus\MessageConsumerState;
 use Robertbaelde\PersistingMessageBus\MessageRepository\Cursor;
 use Robertbaelde\PersistingMessageBus\MessageRepository\IncrementalCursor;
+use Robertbaelde\PersistingMessageBus\MessageRepository\LockableIncrementalCursor;
 
 class IlluminateMessageConsumerStateRepository implements MessageConsumerState
 {
@@ -17,20 +17,26 @@ class IlluminateMessageConsumerStateRepository implements MessageConsumerState
         private string $tableName,
         private string $consumerName,
         private ?array $cursorTypeMap = null,
+        private ?Cursor $defaultCursor = null,
     )
     {
         if($this->cursorTypeMap === null) {
             $this->cursorTypeMap = [
                 IncrementalCursor::class => 'incrementalCursor',
+                LockableIncrementalCursor::class => 'lockableIncrementalCursor',
             ];
+        }
+
+        if($this->defaultCursor === null){
+            $this->defaultCursor = new IncrementalCursor();
         }
     }
 
-    public function getCursor(): ?Cursor
+    public function getCursor(): Cursor
     {
         $row = $this->connection->table($this->tableName)->where('consumer_name', $this->consumerName)->first();
         if(!$row){
-            return null;
+            return $this->defaultCursor;
         }
 
         $cursorData = json_decode($row->cursor, true);

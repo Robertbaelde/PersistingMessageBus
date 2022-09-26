@@ -2,8 +2,6 @@
 
 namespace Robertbaelde\PersistingMessageBus;
 
-use Robertbaelde\PersistingMessageBus\MessageRepository\Cursor;
-
 class MessageConsumer
 {
     public function __construct(

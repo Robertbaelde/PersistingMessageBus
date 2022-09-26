@@ -8,6 +8,7 @@ use EventSauce\Clock\TestClock;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Robertbaelde\PersistingMessageBus\MessageRepository\IncrementalCursor;
+use Robertbaelde\PersistingMessageBus\MessageRepository\LockableIncrementalCursor;
 use Robertbaelde\PersistingMessageBus\MessageRepository\MessageRepository;
 use Robertbaelde\PersistingMessageBus\RawMessage;
 use Symfony\Component\Console\Cursor;

@@ -3,10 +3,8 @@
 namespace Robertbaelde\PersistingMessageBus\Laravel;
 
 use Illuminate\Database\ConnectionInterface;
-use Illuminate\Database\Query\Builder;
 use Robertbaelde\PersistingMessageBus\MessageRepository\Cursor;
 use Robertbaelde\PersistingMessageBus\MessageRepository\IncrementalCursor;
-use Robertbaelde\PersistingMessageBus\MessageRepository\IdCusor;
 use Robertbaelde\PersistingMessageBus\MessageRepository\MessageRepository;
 use Robertbaelde\PersistingMessageBus\MessageRepository\PaginatedMessages;
 use Robertbaelde\PersistingMessageBus\MessageRepository\TableSchema;

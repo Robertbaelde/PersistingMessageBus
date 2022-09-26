@@ -2,12 +2,14 @@
 
 namespace Tests\Fixtures;
 
+use LogicException;
 use Robertbaelde\PersistingMessageBus\MessageRepository\Cursor;
 use Robertbaelde\PersistingMessageBus\MessageRepository\IncrementalCursor;
+use Robertbaelde\PersistingMessageBus\MessageRepository\MessageRepository;
 use Robertbaelde\PersistingMessageBus\MessageRepository\PaginatedMessages;
 use Robertbaelde\PersistingMessageBus\RawMessage;
 
-class InMemoryMessageRepository implements \Robertbaelde\PersistingMessageBus\MessageRepository\MessageRepository
+class InMemoryMessageRepository implements MessageRepository
 {
 
     private array $messages = [];
@@ -27,7 +29,7 @@ class InMemoryMessageRepository implements \Robertbaelde\PersistingMessageBus\Me
         Cursor $cursor
     ): PaginatedMessages {
         if(!$cursor instanceof IncrementalCursor){
-            throw new \LogicException('Only IncrementalCursor is supported');
+            throw new LogicException('Only IncrementalCursor is supported');
         }
 
         $messages = array_filter($this->messages, fn(RawMessage $rawMessage) => $rawMessage->topic === $topicName);
