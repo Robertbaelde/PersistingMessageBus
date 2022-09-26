@@ -38,7 +38,7 @@ class IlluminateMessageRepository implements MessageRepository
         Cursor $cursor
     ): PaginatedMessages {
 
-        if(!$cursor instanceof IncrementalCursor || !$cursor instanceof LockableIncrementalCursor){
+        if(!$cursor instanceof IncrementalCursor && !$cursor instanceof LockableIncrementalCursor){
             throw new \InvalidArgumentException('Only IncrementalCursor is supported');
         }
 
