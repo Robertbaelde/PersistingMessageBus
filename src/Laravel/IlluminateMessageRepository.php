@@ -5,6 +5,7 @@ namespace Robertbaelde\PersistingMessageBus\Laravel;
 use Illuminate\Database\ConnectionInterface;
 use Robertbaelde\PersistingMessageBus\MessageRepository\Cursor;
 use Robertbaelde\PersistingMessageBus\MessageRepository\IncrementalCursor;
+use Robertbaelde\PersistingMessageBus\MessageRepository\LockableIncrementalCursor;
 use Robertbaelde\PersistingMessageBus\MessageRepository\MessageRepository;
 use Robertbaelde\PersistingMessageBus\MessageRepository\PaginatedMessages;
 use Robertbaelde\PersistingMessageBus\MessageRepository\TableSchema;
@@ -37,7 +38,7 @@ class IlluminateMessageRepository implements MessageRepository
         Cursor $cursor
     ): PaginatedMessages {
 
-        if(!$cursor instanceof IncrementalCursor){
+        if(!$cursor instanceof IncrementalCursor || !$cursor instanceof LockableIncrementalCursor){
             throw new \InvalidArgumentException('Only IncrementalCursor is supported');
         }
 
