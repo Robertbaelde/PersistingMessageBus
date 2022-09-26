@@ -37,6 +37,9 @@ class TopicMessageSerializer implements MessageSerializer
             Header::MESSAGE_TYPE => $rawMessage->messageType,
             Header::MESSAGE_TOPIC => $rawMessage->topic,
         ]);
-        return $message->withTimeOfRecording($rawMessage->publishedAt, $rawMessage->publishedAtFormat);
+        if($rawMessage->publishedAtFormat !== null){
+            return $message->withTimeOfRecording($rawMessage->publishedAt, $rawMessage->publishedAtFormat);
+        }
+        return $message->withTimeOfRecording($rawMessage->publishedAt);
     }
 }
