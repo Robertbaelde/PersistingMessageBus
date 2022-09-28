@@ -3,6 +3,7 @@
 namespace Robertbaelde\PersistingMessageBus;
 
 use EventSauce\EventSourcing\ReplayingMessages\TriggerBeforeReplay;
+use Robertbaelde\PersistingMessageBus\MessageRepository\SorryConsumerIsLocked;
 
 class MessageConsumer
 {
@@ -12,6 +13,9 @@ class MessageConsumer
         protected \EventSauce\EventSourcing\MessageConsumer $messageConsumer,
     ){}
 
+    /**
+     * @throws SorryConsumerIsLocked
+     */
     public function handleNewMessages(): int
     {
         $cursor = $this->messageConsumerState->getCursor();
