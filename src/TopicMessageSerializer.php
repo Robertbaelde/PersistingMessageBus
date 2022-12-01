@@ -32,11 +32,12 @@ class TopicMessageSerializer implements MessageSerializer
     {
         $messageClass = $this->topic->getMessageClassFromType($rawMessage->messageType);
         $payload = $messageClass::fromPayload(json_decode($rawMessage->messagePayload, true));
+        $headers = json_decode($rawMessage->headerPayload, true);
         $message = new Message($payload, [
             Header::MESSAGE_ID => $rawMessage->messageId,
             Header::MESSAGE_TYPE => $rawMessage->messageType,
             Header::MESSAGE_TOPIC => $rawMessage->topic,
-        ]);
+        ] + $headers);
         if($rawMessage->publishedAtFormat !== null){
             return $message->withTimeOfRecording($rawMessage->publishedAt, $rawMessage->publishedAtFormat);
         }
