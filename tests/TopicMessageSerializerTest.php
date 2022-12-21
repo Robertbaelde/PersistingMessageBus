@@ -22,13 +22,16 @@ class TopicMessageSerializerTest extends TestCase
     {
         $topicSerializer = new TopicMessageSerializer($topic);
         $message = new Message($publicMessage, [
-            Header::MESSAGE_ID => 'foo'
+            Header::MESSAGE_ID => 'foo',
+            'custom-header' => 'bar',
         ]);
         $message = $message->withTimeOfRecording(new DateTimeImmutable('now'));
         $rawMessage = $topicSerializer->serializeMessage($message);
 
         $reconstructedMessage = $topicSerializer->unserializePayload($rawMessage);
         $this->assertEquals($publicMessage, $reconstructedMessage->payload());
+        $this->assertEquals('foo', $reconstructedMessage->headers()[Header::MESSAGE_ID]);
+        $this->assertEquals('bar', $reconstructedMessage->headers()['custom-header']);
     }
 
     public function providesMessages(): \Generator
