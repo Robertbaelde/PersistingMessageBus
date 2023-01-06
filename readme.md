@@ -122,3 +122,7 @@ CREATE TABLE IF NOT EXISTS `message_consumer_state` (
 * [ ] Add system for Correlation & Causation id's?
 * [ ] Message inbox pattern
 * [ ] Message outbox pattern
+
+## License
+
+The MIT License (MIT). Please see [License File](license.md) for more information.
