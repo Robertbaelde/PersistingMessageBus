@@ -3,7 +3,7 @@
     "require": {
         "eventsauce/eventsauce": "^3",
         "ramsey/uuid": "^4",
-        "illuminate/database": "^8|^9",
+        "illuminate/database": "^8|^9|^10",
         "eventsauce/backoff": "^1.1"
     },
     "require-dev": {
